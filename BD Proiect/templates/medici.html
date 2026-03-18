@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medici</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .input-help {
+            font-size: 0.85em;
+            color: #555;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        .action-link.button-like {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #2a9df4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .action-link.button-like:hover {
+            background-color: #1a7cd6;
+        }
+        ul.medici-lista {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.medici-lista li {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        ul.medici-lista li form {
+            display: inline-block;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        ul.medici-lista li form input,
+        ul.medici-lista li form button {
+            margin-right: 5px;
+        }
+        ul.medici-lista li form button {
+            padding: 3px 8px;
+            font-size: 0.9em;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        input {
+            padding: 6px;
+            margin-bottom: 5px;
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            padding: 8px 15px;
+            background-color: #2a9df4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #1a7cd6;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Lista Medicilor</h1>
+
+    <a href="/" class="action-link button-like">← Meniu Principal</a>
+
+    <form method="POST" action="/adauga_medic" novalidate>
+        <label for="grad">Grad:</label>
+        <input name="grad" placeholder="Introduceți gradul medicului" required>
+        <div class="input-help">Exemplu: Dr., Prof., Conf.</div>
+
+        <label for="nume">Nume:</label>
+        <input name="nume" placeholder="Introduceți numele de familie" required>
+        <div class="input-help">Introduceți numele de familie al medicului.</div>
+
+        <label for="prenume">Prenume:</label>
+        <input name="prenume" placeholder="Introduceți prenumele" required>
+        <div class="input-help">Introduceți prenumele medicului.</div>
+
+        <label for="nr_telefon">Telefon:</label>
+        <input name="nr_telefon" placeholder="Introduceți numărul de telefon" required>
+        <div class="input-help">Format recomandat: 07xx xxx xxx.</div>
+
+        <label for="departamente">Departamente:</label>
+        <input name="departamente" placeholder="Introduceți departamentele" required>
+        <div class="input-help">Exemplu: Cardiologie, Neurologie.</div>
+
+        <button type="submit">Adaugă medic</button>
+    </form>
+
+    <h2>Medici existenți</h2>
+    <ul class="medici-lista">
+        {% for m in medici %}
+        <li>
+            <strong>{{ m.grad }} {{ m.nume }} {{ m.prenume }}</strong> - {{ m.nr_telefon }} - {{ m.departamente }}
+
+            <form action="/editeaza_medic/{{ m.id_medic }}" method="POST" style="display:inline-block; vertical-align: middle;">
+                <input name="grad" value="{{ m.grad }}" required>
+                <input name="nume" value="{{ m.nume }}" required>
+                <input name="prenume" value="{{ m.prenume }}" required>
+                <input name="nr_telefon" value="{{ m.nr_telefon }}" required>
+                <input name="departamente" value="{{ m.departamente }}" required>
+                <button type="submit" title="Salvează modificările">Salvează</button>
+            </form>
+
+            <form action="/sterge_medic/{{ m.id_medic }}" method="get" style="display:inline-block; vertical-align: middle;"
+                  onsubmit="return confirm('Sigur vrei să ștergi medicul?');">
+                <button type="submit" title="Șterge medicul">Șterge</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>

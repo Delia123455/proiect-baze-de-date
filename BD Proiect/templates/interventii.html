@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Intervenții</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .input-help {
+            font-size: 0.85em;
+            color: #555;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        .action-link.button-like {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #2a9df4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .action-link.button-like:hover {
+            background-color: #1a7cd6;
+        }
+        ul.interventii-lista {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.interventii-lista li {
+            background: #f9f9f9;
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        ul.interventii-lista li form {
+            display: inline;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Gestionare Intervenții</h1>
+
+    <a href="/" class="action-link button-like">← Meniu Principal</a>
+
+    <form method="POST" action="/interventii" novalidate>
+<label for="id_pacient">Pacient:</label>
+        <select id="id_pacient" name="id_pacient" required>
+            <option value="" disabled selected>Alege pacient</option>
+            {% for p in pacienti %}
+                <option value="{{ p.id_pacient }}">{{ p.nume }} {{ p.prenume }}</option>
+            {% endfor %}
+        </select>
+        <div class="input-help">Selectați pacientul pentru care se înregistrează intervenția.</div>
+
+        <label for="id_medic">Medic:</label>
+        <select name="id_medic" required>
+            <option value="" disabled selected>Alege medic</option>
+            {% for m in medici %}
+                <option value="{{ m.id_medic }}">{{ m.nume }} {{ m.prenume }} - {{ m.departamente }}</option>
+            {% endfor %}
+        </select>
+        <div class="input-help">Selectați medicul responsabil de intervenție.</div>
+
+        <label>
+            Numele bolii:
+            <input name="nume_boala" placeholder="Ex: Pneumonie" required>
+            <div class="input-help">Introduceți denumirea bolii sau afecțiunii tratate.</div>
+        </label>
+
+        <label>
+            Diagnostic complet:
+            <textarea name="diagnostic" placeholder="Descrie diagnosticul complet" required></textarea>
+            <div class="input-help">Detalii complete despre diagnostic și observații.</div>
+        </label>
+
+        <label>
+            Nivel de gravitate (1–5):
+            <input type="number" name="nivel_gravitate" min="1" max="5" placeholder="Ex: 3" required>
+            <div class="input-help">Introduceți un nivel de gravitate de la 1 (ușor) la 5 (foarte grav).</div>
+        </label>
+
+        <button type="submit">Adaugă intervenție</button>
+    </form>
+
+    <h2>Lista intervențiilor existente</h2>
+    <ul class="interventii-lista">
+        {% for i in interventii %}
+        <li>
+            <strong>Boală:</strong> {{ i.nume_boala }}<br>
+            <strong>Pacient:</strong> {{ i.nume_pacient }} {{ i.prenume_pacient }} &nbsp; | &nbsp;
+            <strong>Medic:</strong> {{ i.nume_medic }} {{ i.prenume_medic }}<br>
+            <strong>Gravitate:</strong> {{ i.nivel_gravitate }}<br>
+            <strong>Diagnostic:</strong> {{ i.diagnostic }}
+            <form action="/sterge_interventie/{{ i.id_interventie }}" method="post" style="display:inline;">
+                <button  type="submit">Șterge</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pacienți</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .input-help {
+            font-size: 0.85em;
+            color: #555;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        .action-link.button-like {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #2a9df4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .action-link.button-like:hover {
+            background-color: #1a7cd6;
+        }
+        .action-link.button-like1 {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #2b5876;
+;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .action-link.button-like1:hover {
+            background-color: #1e3b53;
+        }
+        ul.pacienti-lista {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.pacienti-lista li {
+            background: #f9f9f9;
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        ul.pacienti-lista li form {
+            display: inline;
+        }
+        ul.pacienti-lista li a.action-link.button-like {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Gestionare Pacienți</h1>
+
+    <a href="/" class="action-link button-like">← Meniu Principal</a>
+
+    <form method="POST" action="/adauga_pacient" novalidate>
+        {% if pacient_edit %}
+            <input type="hidden" name="id_pacient" value="{{ pacient_edit.id_pacient }}">
+        {% endif %}
+
+        <label>
+            Nume pacient:
+            <input name="nume" placeholder="Ex: Popescu" required value="{{ pacient_edit.nume if pacient_edit }}">
+            <div class="input-help">Introduceți numele de familie al pacientului.</div>
+        </label>
+
+        <label>
+            Prenume:
+            <input name="prenume" placeholder="Ex: Andrei" required value="{{ pacient_edit.prenume if pacient_edit }}">
+            <div class="input-help">Introduceți prenumele pacientului.</div>
+        </label>
+
+        <label>
+            Vârsta:
+            <input type="number" name="varsta" min="0" max="120" placeholder="Ex: 35" value="{{ pacient_edit.varsta if pacient_edit }}">
+            <div class="input-help">Introduceți vârsta pacientului în ani.</div>
+        </label>
+
+        <label>
+            Adresă:
+            <input name="adresa" placeholder="Ex: Str. Libertății 10, București" value="{{ pacient_edit.adresa if pacient_edit }}">
+            <div class="input-help">Adresa completă a pacientului (opțional).</div>
+        </label>
+
+        <label>
+            Număr telefon:
+            <input name="nr_telefon" placeholder="Ex: 0712345678" pattern="\d{10}" value="{{ pacient_edit.nr_telefon if pacient_edit }}">
+            <div class="input-help">Număr de telefon format din 10 cifre (opțional).</div>
+        </label>
+
+        <label>
+            Email:
+            <input type="email" name="email" placeholder="exemplu@mail.com" value="{{ pacient_edit.email if pacient_edit }}">
+            <div class="input-help">Adresa de email validă a pacientului (opțional).</div>
+        </label>
+
+        <button type="submit">{% if pacient_edit %}Salvează modificările{% else %}Adaugă pacient{% endif %}</button>
+    </form>
+
+    <h2>Lista Pacienților</h2>
+    <ul class="pacienti-lista">
+        {% for p in pacienti %}
+        <li>
+            <strong>Pacient:</strong> {{ p.nume }} {{ p.prenume }}<br>
+            <strong>Email:</strong> {{ p.email }} &nbsp; | &nbsp; 
+            <strong>Vârsta:</strong> {{ p.varsta }} ani
+            <a href="/pacienti?edit={{ p.id_pacient }}" class="action-link button-like1">Editează</a>
+            <a href="/sterge_pacient/{{ p.id_pacient }}" class="action-link button-like1" onclick="return confirm('Ești sigur că vrei să ștergi acest pacient?');">Șterge</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>

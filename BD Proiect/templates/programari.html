@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8" />
+    <title>Programări</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .action-link.button-like {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #2a9df4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .action-link.button-like:hover {
+            background-color: #1a7cd6;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Programări</h1>
+
+    <a href="/" class="action-link button-like" aria-label="Înapoi la meniul principal">← Meniu Principal</a>
+
+    <form method="POST" action="/adauga_programare" novalidate>
+        <label for="data_programare">Data programării:</label>
+        <input type="date" id="data_programare" name="data_programare" required>
+        <div class="input-help">Selectați data programării.</div>
+
+        <label for="ora_programare">Ora programării:</label>
+        <input type="time" id="ora_programare" name="ora_programare" required>
+        <div class="input-help">Selectați ora programării.</div>
+
+        <label for="id_pacient">Pacient:</label>
+        <select id="id_pacient" name="id_pacient" required>
+            <option value="" disabled selected>Alege pacient</option>
+            {% for pacient in pacienti %}
+            <option value="{{ pacient.id_pacient }}">{{ pacient.nume }} {{ pacient.prenume }}</option>
+            {% endfor %}
+        </select>
+        <div class="input-help">Selectați pacientul pentru programare.</div>
+
+        <label for="id_medic">Medic:</label>
+        <select id="id_medic" name="id_medic" required>
+            <option value="" disabled selected>Alege medic</option>
+            {% for medic in medici %}
+            <option value="{{ medic.id_medic }}">{{ medic.nume }} {{ medic.prenume }}</option>
+            {% endfor %}
+        </select>
+        <div class="input-help">Selectați medicul responsabil.</div>
+
+        <label for="stare">Status programare:</label>
+        <input id="stare" name="stare" placeholder="Ex: Confirmată, În așteptare" required>
+        <div class="input-help">Introduceți statusul programării.</div>
+
+        <button type="submit">Programează</button>
+    </form>
+
+    <h2>Lista programărilor existente</h2>
+    <ul class="programari-lista">
+        {% for p in programari %}
+        <li>
+            <div class="programare-info"><strong>Data/Ora:</strong> {{ p.data_programare }} {{ p.ora_programare }}</div>
+            <div class="programare-info"><strong>Pacient:</strong> {{ p.nume_pacient }} {{ p.prenume_pacient }}</div>
+            <div class="programare-info"><strong>Medic:</strong> {{ p.nume_medic }} {{ p.prenume_medic }}</div>
+            <div class="programare-info"><strong>Status:</strong> {{ p.stare }}</div>
+
+            <!-- Formular editare programare -->
+            <form action="/editeaza_programare/{{ p.id_programare }}" method="POST" style="display:inline-block; vertical-align: middle;">
+                <input type="date" name="data_programare" value="{{ p.data_programare }}" required>
+                <input type="time" name="ora_programare" value="{{ p.ora_programare }}" required>
+                <input name="stare" value="{{ p.stare }}" placeholder="Status programare" required>
+
+                <select name="id_pacient" required>
+                    {% for pacient in pacienti %}
+                    <option value="{{ pacient.id_pacient }}" {% if pacient.id_pacient == p.id_pacient %}selected{% endif %}>
+                        {{ pacient.nume }} {{ pacient.prenume }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <select name="id_medic" required>
+                    {% for medic in medici %}
+                    <option value="{{ medic.id_medic }}" {% if medic.id_medic == p.id_medic %}selected{% endif %}>
+                        {{ medic.nume }} {{ medic.prenume }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" title="Salvează modificările">Salvează</button>
+            </form>
+
+            <!-- Formular ștergere programare -->
+            <form action="/sterge_programare/{{ p.id_programare }}" method="get" style="display:inline-block; vertical-align: middle;"
+                  onsubmit="return confirm('Sigur vrei să ștergi programarea?');">
+                <button type="submit" title="Șterge programarea">Șterge</button>
+            </form>
+        </li>
+        {% else %}
+        <li>Nu există programări înregistrate.</li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>

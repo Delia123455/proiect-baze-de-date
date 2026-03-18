@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chitanțe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, select {
+            padding: 6px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            padding: 8px 15px;
+            background-color: #2a9df4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #1a7cd6;
+        }
+        ul.lista-chitante {
+            list-style-type: none;
+            padding-left: 0;
+            max-width: 600px;
+        }
+        ul.lista-chitante li {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        ul.lista-chitante li form {
+            display: inline-block;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        ul.lista-chitante li form button {
+            padding: 3px 8px;
+            font-size: 0.9em;
+        }
+        .action-link.button-like {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #2a9df4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .action-link.button-like:hover {
+            background-color: #1a7cd6;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Chitanțe</h1>
+    
+     <a href="/" class="action-link button-like" aria-label="Înapoi la meniul principal">← Meniu Principal</a> 
+
+    <form method="POST" action="/adauga_receipt" novalidate>
+        <label for="patient_name">Pacient:</label>
+        <select name="patient_name" required>
+            <option value="" disabled selected>Alege pacientul</option>
+            {% for p in pacienti %}
+                <option value="{{ p.id_pacient }}">{{ p.nume }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="interventie">Intervenție:</label>
+        <select name="interventie" required>
+            <option value="" disabled selected>Alege intervenția</option>
+            {% for i in interventii %}
+                <option value="{{ i.id_interventie }}">{{ i.nume_boala }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="total_plata">Total plată:</label>
+        <input type="number" name="total_plata" placeholder="Introduceți suma" step="0.01" required>
+
+        <label for="status">Status:</label>
+        <input type="text" name="status" placeholder="Introduceți statusul" required>
+
+        <button type="submit">Adaugă chitanță</button>
+    </form>
+
+    <h2>Chitanțe emise</h2>
+    <ul class="lista-chitante">
+        {% for r in receipts %}
+        <li>
+            <strong>{{ r.patient_name }}</strong> - {{ r.total_plata }} lei - Status: {{ r.status }}
+            <form action="/sterge_receipt/{{ r.id_receipt }}" method="post" style="display:inline;">
+                <button type="submit" title="Șterge chitanța">Șterge</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>
